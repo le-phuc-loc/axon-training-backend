@@ -22,7 +22,7 @@ import org.acme.note.entity.Note;
 import org.acme.note.repository.NoteRepository;
 
 
-@Path("api/notes")
+@Path("notes")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class NoteResource {
