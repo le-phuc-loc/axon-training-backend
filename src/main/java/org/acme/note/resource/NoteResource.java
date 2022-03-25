@@ -22,6 +22,7 @@ import org.acme.note.entity.Note;
 import org.acme.note.repository.NoteRepository;
 
 
+
 @Path("notes")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -33,9 +34,11 @@ public class NoteResource {
     @GET
     public Response list(
             @QueryParam("page_index") @DefaultValue("0") int page_index,
-            @QueryParam("page_size") @DefaultValue("8") int page_size
+            @QueryParam("page_size") @DefaultValue("8") int page_size,
+            @QueryParam("content") @DefaultValue("") String content
         ) {
-        return Response.ok(noteRepository.findAll().page(page_index, page_size).list()).build();
+        
+        return Response.ok(noteRepository.findByContent(content).page(page_index, page_size).list()).build();
     }
 
     @GET
@@ -52,7 +55,7 @@ public class NoteResource {
     public Response create(Note note) {
         noteRepository.persist(note);
         if (noteRepository.isPersistent(note)) {
-            return Response.status(Status.CREATED).build();
+            return Response.ok(note).status(Status.CREATED).build();
         }
         return Response.status(Status.BAD_REQUEST).build();
     }
@@ -77,7 +80,7 @@ public class NoteResource {
         return noteRepository.findByIdOptional(id)
         .map(record -> {
             noteRepository.deleteById(id);
-            return Response.status(Status.NO_CONTENT).build();
+            return Response.ok(record).status(Status.NO_CONTENT).build();
         })
         .orElse(Response.status(Status.NOT_FOUND).build());
        

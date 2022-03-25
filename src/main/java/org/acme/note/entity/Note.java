@@ -1,6 +1,7 @@
 package org.acme.note.entity;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -28,8 +29,8 @@ public class Note {
         this.content = content;
     }
 
-    public LocalDateTime getCreatedAt(){
-        return created_at;
+    public String getCreatedAt(){
+        return created_at.format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss"));
     }
     public void setCreatedAt(LocalDateTime created_at){
         this.created_at = created_at;
