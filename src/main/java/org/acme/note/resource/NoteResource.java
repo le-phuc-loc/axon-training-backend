@@ -1,6 +1,5 @@
 package org.acme.note.resource;
 
-import java.util.Optional;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
