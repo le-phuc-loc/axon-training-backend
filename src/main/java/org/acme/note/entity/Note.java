@@ -3,6 +3,7 @@ package org.acme.note.entity;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -11,6 +12,8 @@ import javax.persistence.PrePersist;
 @Entity
 public class Note {
     @Id @GeneratedValue private Long id;
+
+    @Column(length = 10000)
     private String content;
     private LocalDateTime created_at;
 
