@@ -1,6 +1,5 @@
 package org.acme.note.resource;
 
-
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.ws.rs.Consumes;
@@ -15,73 +14,51 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 
 import org.acme.note.entity.Note;
-import org.acme.note.repository.NoteRepository;
-
-
+import org.acme.note.service.NoteService;
 
 @Path("notes")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class NoteResource {
-    
+
     @Inject
-    NoteRepository noteRepository;
+    NoteService noteService;
 
     @GET
     public Response list(
             @QueryParam("page_index") @DefaultValue("0") int page_index,
             @QueryParam("page_size") @DefaultValue("8") int page_size,
-            @QueryParam("content") @DefaultValue("") String content
-        ) {
-        
-        return Response.ok(noteRepository.findByContent(content).page(page_index, page_size).list()).build();
+            @QueryParam("content") @DefaultValue("") String content) {
+
+        return noteService.list(page_index, page_size, content);
     }
 
     @GET
     @Path("/{id}")
     public Response get(@PathParam("id") Long id) {
-        
-        return noteRepository.findByIdOptional(id)
-            .map(record -> Response.ok(record).build())
-            .orElse(Response.status(Status.NOT_FOUND).build());
+
+        return noteService.get(id);
     }
 
     @POST
     @Transactional
     public Response create(Note note) {
-        noteRepository.persist(note);
-        if (noteRepository.isPersistent(note)) {
-            return Response.ok(note).status(Status.CREATED).build();
-        }
-        return Response.status(Status.BAD_REQUEST).build();
+        return noteService.create(note);
     }
 
     @PUT
     @Path("/{id}")
     @Transactional
     public Response update(@PathParam("id") Long id, Note note) {
-        return noteRepository.findByIdOptional(id)
-        .map(record -> {
-            record.setContent(note.getContent());
-            noteRepository.persist(record);
-            return Response.ok(record).build();
-        })
-        .orElse(Response.status(Status.NOT_FOUND).build());
+        return noteService.update(id, note);
     }
 
     @DELETE
     @Path("/{id}")
     @Transactional
     public Response delete(@PathParam("id") Long id) {
-        return noteRepository.findByIdOptional(id)
-        .map(record -> {
-            noteRepository.deleteById(id);
-            return Response.ok(record).status(Status.NO_CONTENT).build();
-        })
-        .orElse(Response.status(Status.NOT_FOUND).build());
-       
+        return noteService.delete(id);
     }
 }
